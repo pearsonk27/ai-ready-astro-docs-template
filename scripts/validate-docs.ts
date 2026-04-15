@@ -11,7 +11,7 @@ type ValidationIssue = {
 const DOCS_GLOB = 'src/content/docs/**/*.md';
 const REQUIRED_SECTIONS = ['rules', 'examples'];
 const DISALLOWED_PHRASES = [/\bsee above\b/i, /\bas mentioned earlier\b/i];
-const EXPLANATION_LABEL = /^(\*\*Explanation:\*\*|Explanation:)\s*(.*)$/;
+
 
 function toPosix(filePath: string): string {
 	return filePath.split(path.sep).join('/');
@@ -102,11 +102,18 @@ function htmlAltText(line: string): string | null {
 	return altMatch[2].trim();
 }
 
-function findNextNonEmptyLine(lines: string[], startIndex: number): number {
-	for (let i = startIndex + 1; i < lines.length; i += 1) {
-		if (lines[i].trim().length > 0) return i;
-	}
-	return -1;
+function markdownTitleText(line: string): string | null {
+	const match = line.match(/!\[[^\]]*\]\([^)]*\s+"([^"]*)"|!\[[^\]]*\]\([^)]*\s+'([^']*)'\)/);
+	if (!match) return null;
+	return (match[1] ?? match[2] ?? '').trim();
+}
+
+function htmlTitleText(line: string): string | null {
+	const tagMatch = line.match(/<img\b[^>]*>/i);
+	if (!tagMatch) return null;
+	const titleMatch = tagMatch[0].match(/\btitle\s*=\s*(['"])(.*?)\1/i);
+	if (!titleMatch) return null;
+	return titleMatch[2].trim();
 }
 
 function validateImageRules(content: string, file: string): ValidationIssue[] {
@@ -127,44 +134,16 @@ function validateImageRules(content: string, file: string): ValidationIssue[] {
 			});
 		}
 
-		const nextNonEmptyLineIndex = findNextNonEmptyLine(lines, i);
-		if (nextNonEmptyLineIndex < 0 || nextNonEmptyLineIndex > i + 2) {
+		const titleText = markdownImage ? markdownTitleText(line) : htmlTitleText(line);
+		if (titleText === null || titleText.length === 0) {
 			issues.push({
 				file,
-				message: `Image on line ${i + 1} must be followed immediately by an explanation block`,
+				message: `Image on line ${i + 1} is missing a title attribute (used as hover tooltip)`,
 			});
-			continue;
-		}
-
-		const explanationLine = lines[nextNonEmptyLineIndex].trim();
-		const explanationLabelMatch = explanationLine.match(EXPLANATION_LABEL);
-		if (!explanationLabelMatch) {
+		} else if (titleText.length < 20) {
 			issues.push({
 				file,
-				message: `Image on line ${i + 1} must be followed by Explanation: or **Explanation:**`,
-			});
-			continue;
-		}
-
-		const inlineExplanation = explanationLabelMatch[2]?.trim() ?? '';
-		if (inlineExplanation.length > 0) {
-			continue;
-		}
-
-		const nextExplanationContent = findNextNonEmptyLine(lines, nextNonEmptyLineIndex);
-		if (nextExplanationContent < 0 || nextExplanationContent > nextNonEmptyLineIndex + 1) {
-			issues.push({
-				file,
-				message: `Explanation block for image on line ${i + 1} must include descriptive text`,
-			});
-			continue;
-		}
-
-		const explanationBody = lines[nextExplanationContent].trim();
-		if (explanationBody.length < 20) {
-			issues.push({
-				file,
-				message: `Explanation block for image on line ${i + 1} must be descriptive (>= 20 characters)`,
+				message: `Image on line ${i + 1} title attribute must be descriptive (>= 20 characters)`,
 			});
 		}
 	}

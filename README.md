@@ -25,7 +25,7 @@ All docs must avoid vague references:
 All images must include:
 
 - non-empty alt text
-- immediate explanation block using `Explanation:` or `**Explanation:**`
+- a `title` attribute (displayed as a hover tooltip)
 
 ## Project structure
 
@@ -96,7 +96,7 @@ The custom validator fails when:
 - required sections are missing
 - disallowed phrases are present
 - images are missing alt text
-- images are missing immediate explanation blocks
+- images are missing a title attribute (hover tooltip)
 
 ## Pre-commit enforcement
 
@@ -181,7 +181,7 @@ The optional job is separate and configured as non-blocking.
 
 - Build fails at schema phase:
   - verify required frontmatter fields and formats.
-- Validation fails for image explanation:
-  - place `Explanation:` or `**Explanation:**` immediately after image line (one blank line allowed).
+- Validation fails for image title:
+  - add a `title` attribute to the image: `![alt](url "Your descriptive tooltip here")`.
 - Pre-commit blocks valid-looking change:
   - run `npm run validate:docs` and use the reported file/line hints.
