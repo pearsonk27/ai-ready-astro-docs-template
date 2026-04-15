@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "npm run validate:docs && astro build",
+    "test": "tsx --test \"scripts/**/*.test.ts\"",
     "preview": "astro preview",
     "astro": "astro",
     "validate:docs": "tsx scripts/validate-docs.ts",

@@ -2,6 +2,7 @@ import fg from 'fast-glob';
 import matter from 'gray-matter';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 type ValidationIssue = {
 	file: string;
@@ -151,6 +152,31 @@ function validateImageRules(content: string, file: string): ValidationIssue[] {
 	return issues;
 }
 
+export function validateDocContent(content: string, file: string): ValidationIssue[] {
+	return [
+		...validateRequiredSections(content, file),
+		...validateDisallowedPhrases(content, file),
+		...validateImageRules(content, file),
+	];
+}
+
+export function validateRawDoc(rawMarkdown: string, file: string): ValidationIssue[] {
+	const parsed = matter(rawMarkdown);
+	return validateDocContent(parsed.content, file);
+}
+
+export async function validateDocFiles(files: string[]): Promise<ValidationIssue[]> {
+	const issues: ValidationIssue[] = [];
+
+	for (const file of files) {
+		const raw = await fs.readFile(file, 'utf8');
+		const relativeFile = toPosix(path.relative(process.cwd(), file));
+		issues.push(...validateRawDoc(raw, relativeFile));
+	}
+
+	return issues;
+}
+
 async function main(): Promise<void> {
 	const files = await fg(DOCS_GLOB, { dot: false, onlyFiles: true });
 	if (files.length === 0) {
@@ -158,18 +184,7 @@ async function main(): Promise<void> {
 		process.exit(1);
 	}
 
-	const issues: ValidationIssue[] = [];
-
-	for (const file of files) {
-		const raw = await fs.readFile(file, 'utf8');
-		const parsed = matter(raw);
-		const content = parsed.content;
-		const relativeFile = toPosix(path.relative(process.cwd(), file));
-
-		issues.push(...validateRequiredSections(content, relativeFile));
-		issues.push(...validateDisallowedPhrases(content, relativeFile));
-		issues.push(...validateImageRules(content, relativeFile));
-	}
+	const issues = await validateDocFiles(files);
 
 	if (issues.length > 0) {
 		console.error('Document validation failed:');
@@ -182,4 +197,7 @@ async function main(): Promise<void> {
 	console.log(`Docs validation passed for ${files.length} file(s).`);
 }
 
-void main();
+const invokedPath = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : '';
+if (import.meta.url === invokedPath) {
+	void main();
+}
