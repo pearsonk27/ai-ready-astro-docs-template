@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="240" viewBox="0 0 900 240" role="img" aria-labelledby="title desc">
+  <title id="title">Policy cancellation flow</title>
+  <desc id="desc">A flow from active to pending cancel to cancelled with payment recovery path to active.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #1f2937; stroke-width: 2; rx: 10; }
+      .text { font-family: Arial, sans-serif; font-size: 20px; fill: #111827; font-weight: 700; }
+      .sub { font-family: Arial, sans-serif; font-size: 14px; fill: #374151; }
+      .arrow { stroke: #111827; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .recovery { stroke: #0f766e; stroke-width: 3; fill: none; marker-end: url(#arrowheadRecovery); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#111827" />
+    </marker>
+    <marker id="arrowheadRecovery" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#0f766e" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="900" height="240" />
+
+  <rect class="box" x="60" y="70" width="220" height="100" />
+  <text class="text" x="170" y="118" text-anchor="middle">ACTIVE</text>
+  <text class="sub" x="170" y="145" text-anchor="middle">Policy in force</text>
+
+  <rect class="box" x="340" y="70" width="220" height="100" />
+  <text class="text" x="450" y="118" text-anchor="middle">PENDING_CANCEL</text>
+  <text class="sub" x="450" y="145" text-anchor="middle">10+ days non-payment</text>
+
+  <rect class="box" x="620" y="70" width="220" height="100" />
+  <text class="text" x="730" y="118" text-anchor="middle">CANCELLED</text>
+  <text class="sub" x="730" y="145" text-anchor="middle">30-day threshold reached</text>
+
+  <path class="arrow" d="M280 120 H335" />
+  <path class="arrow" d="M560 120 H615" />
+  <path class="recovery" d="M450 70 C450 30,170 30,170 65" />
+
+  <text class="sub" x="308" y="108" text-anchor="middle">10 days</text>
+  <text class="sub" x="588" y="108" text-anchor="middle">30 days</text>
+  <text class="sub" x="304" y="25" text-anchor="middle" fill="#0f766e">Payment received resets to ACTIVE</text>
+</svg>

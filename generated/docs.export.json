@@ -1,0 +1,117 @@
+[
+  {
+    "id": "engineering-policy-lifecycle-service",
+    "title": "Policy Lifecycle Service",
+    "sections": [
+      {
+        "heading": "Overview",
+        "content": "The Policy Lifecycle Service evaluates policy state transitions based on billing, underwriting, and compliance events."
+      },
+      {
+        "heading": "Rules",
+        "content": "The service accepts only versioned event contracts and rejects unknown event schemas with a 400 response.\n\nState transitions are idempotent by policy identifier and transition key to prevent duplicate status updates during retries.\n\nAll transition decisions are persisted with event correlation identifiers for deterministic replay."
+      },
+      {
+        "heading": "Examples",
+        "content": "A duplicate PAYMENT_POSTED event with the same transition key is acknowledged and does not create a second ACTIVE transition.\n\nA POLICY_REINSTATE event for a CANCELLED policy is accepted only when billing balance is zero and underwriting hold is false."
+      }
+    ],
+    "metadata": {
+      "title": "Policy Lifecycle Service",
+      "domain": "engineering",
+      "tags": [
+        "service-design",
+        "state-machine"
+      ],
+      "last_updated": "2026-04-15"
+    },
+    "source_path": "src/content/docs/engineering-policy-lifecycle-service.md",
+    "raw_content": "\n## Overview\n\nThe Policy Lifecycle Service evaluates policy state transitions based on billing, underwriting, and compliance events.\n\n## Rules\n\nThe service accepts only versioned event contracts and rejects unknown event schemas with a 400 response.\n\nState transitions are idempotent by policy identifier and transition key to prevent duplicate status updates during retries.\n\nAll transition decisions are persisted with event correlation identifiers for deterministic replay.\n\n## Examples\n\nA duplicate PAYMENT_POSTED event with the same transition key is acknowledged and does not create a second ACTIVE transition.\n\nA POLICY_REINSTATE event for a CANCELLED policy is accepted only when billing balance is zero and underwriting hold is false.\n"
+  },
+  {
+    "id": "index",
+    "title": "Documentation Home",
+    "sections": [
+      {
+        "heading": "Overview",
+        "content": "This template provides enforceable, AI-ready documentation standards for underwriting, engineering, and portal domains."
+      },
+      {
+        "heading": "Rules",
+        "content": "All documents must include required frontmatter, required sections, and image explanation blocks to remain machine-parseable.\n\nValidation runs at commit time and build time to keep documentation quality consistent."
+      },
+      {
+        "heading": "Examples",
+        "content": "Use the three seeded domain documents as canonical examples for authoring new content."
+      }
+    ],
+    "metadata": {
+      "title": "Documentation Home",
+      "domain": "engineering",
+      "tags": [
+        "overview"
+      ],
+      "last_updated": "2026-04-15"
+    },
+    "source_path": "src/content/docs/index.md",
+    "raw_content": "\n## Overview\n\nThis template provides enforceable, AI-ready documentation standards for underwriting, engineering, and portal domains.\n\n## Rules\n\nAll documents must include required frontmatter, required sections, and image explanation blocks to remain machine-parseable.\n\nValidation runs at commit time and build time to keep documentation quality consistent.\n\n## Examples\n\nUse the three seeded domain documents as canonical examples for authoring new content.\n"
+  },
+  {
+    "id": "portal-quoting-flow",
+    "title": "Quoting Flow",
+    "sections": [
+      {
+        "heading": "Overview",
+        "content": "The portal quoting flow captures applicant details, computes eligible products, and produces a quote package with premium options."
+      },
+      {
+        "heading": "Rules",
+        "content": "A quote session expires after 30 minutes of inactivity and must be restarted with a new session identifier.\n\nAll required applicant fields must pass client and server validation before pricing is requested.\n\nA bound quote version cannot be edited; any update creates a new quote revision."
+      },
+      {
+        "heading": "Examples",
+        "content": "A user who pauses input for 35 minutes receives an expired-session response and restarts a quote.\n\nA user who changes vehicle mileage after pricing triggers a new quote revision with recalculated premium."
+      }
+    ],
+    "metadata": {
+      "title": "Quoting Flow",
+      "domain": "portal",
+      "tags": [
+        "user-journey",
+        "quote"
+      ],
+      "last_updated": "2026-04-15"
+    },
+    "source_path": "src/content/docs/portal-quoting-flow.md",
+    "raw_content": "\n## Overview\n\nThe portal quoting flow captures applicant details, computes eligible products, and produces a quote package with premium options.\n\n## Rules\n\nA quote session expires after 30 minutes of inactivity and must be restarted with a new session identifier.\n\nAll required applicant fields must pass client and server validation before pricing is requested.\n\nA bound quote version cannot be edited; any update creates a new quote revision.\n\n## Examples\n\nA user who pauses input for 35 minutes receives an expired-session response and restarts a quote.\n\nA user who changes vehicle mileage after pricing triggers a new quote revision with recalculated premium.\n"
+  },
+  {
+    "id": "underwriting-policy-cancellation",
+    "title": "Policy Cancellation",
+    "sections": [
+      {
+        "heading": "Overview",
+        "content": "Policy cancellation is triggered when a billing cycle remains unpaid past the grace period and no approved exception is active."
+      },
+      {
+        "heading": "Rules",
+        "content": "If a payment remains unresolved for 10 days after due date, policy status changes from ACTIVE to PENDING_CANCEL.\n\nIf payment is received while status is PENDING_CANCEL, status returns to ACTIVE and cancellation timer is cleared.\n\nAfter 30 days in PENDING_CANCEL without payment, status changes to CANCELLED.\n\n![Cancellation flow diagram](/images/policy-cancellation-flow.svg)\n\n**Explanation:**\nPolicies move from ACTIVE to PENDING_CANCEL after 10 days of non-payment, and then move to CANCELLED after 30 days if no payment is received."
+      },
+      {
+        "heading": "Examples",
+        "content": "An AUTO policy with a due date of 2026-02-01 receives no payment until 2026-02-14, so it becomes PENDING_CANCEL on 2026-02-11 and returns to ACTIVE on payment.\n\nA HOME policy due 2026-01-01 receives no payment by 2026-01-31, so it transitions from ACTIVE to PENDING_CANCEL to CANCELLED."
+      }
+    ],
+    "metadata": {
+      "title": "Policy Cancellation",
+      "domain": "underwriting",
+      "tags": [
+        "cancellation",
+        "non-payment"
+      ],
+      "last_updated": "2026-04-15"
+    },
+    "source_path": "src/content/docs/underwriting-policy-cancellation.md",
+    "raw_content": "\n## Overview\n\nPolicy cancellation is triggered when a billing cycle remains unpaid past the grace period and no approved exception is active.\n\n## Rules\n\nIf a payment remains unresolved for 10 days after due date, policy status changes from ACTIVE to PENDING_CANCEL.\n\nIf payment is received while status is PENDING_CANCEL, status returns to ACTIVE and cancellation timer is cleared.\n\nAfter 30 days in PENDING_CANCEL without payment, status changes to CANCELLED.\n\n![Cancellation flow diagram](/images/policy-cancellation-flow.svg)\n\n**Explanation:**\nPolicies move from ACTIVE to PENDING_CANCEL after 10 days of non-payment, and then move to CANCELLED after 30 days if no payment is received.\n\n## Examples\n\nAn AUTO policy with a due date of 2026-02-01 receives no payment until 2026-02-14, so it becomes PENDING_CANCEL on 2026-02-11 and returns to ACTIVE on payment.\n\nA HOME policy due 2026-01-01 receives no payment by 2026-01-31, so it transitions from ACTIVE to PENDING_CANCEL to CANCELLED.\n"
+  }
+]

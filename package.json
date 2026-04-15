@@ -1,0 +1,36 @@
+{
+  "name": "ai-ready-astro-docs-template",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "npm run validate:docs && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "validate:docs": "tsx scripts/validate-docs.ts",
+    "create-doc": "tsx scripts/create-doc.ts",
+    "export:docs": "tsx scripts/export-docs.ts",
+    "load:docs:db": "tsx scripts/load-docs-to-db.ts",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.38.3",
+    "astro": "^6.0.1",
+    "pg": "^8.20.0",
+    "sharp": "^0.34.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "husky": "^9.1.7",
+    "remark": "^15.0.1",
+    "remark-parse": "^11.0.0",
+    "tsx": "^4.21.0",
+    "unist-util-visit": "^5.1.0"
+  }
+}
