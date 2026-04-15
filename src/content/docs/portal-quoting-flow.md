@@ -7,8 +7,6 @@ tags:
 last_updated: "2026-04-15"
 ---
 
-## Overview
-
 The portal quoting flow captures applicant details, computes eligible products, and produces a quote package with premium options.
 
 ## Rules

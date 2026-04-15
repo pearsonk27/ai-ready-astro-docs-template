@@ -6,8 +6,6 @@ tags:
 last_updated: "2026-04-15"
 ---
 
-## Overview
-
 This template provides enforceable, AI-ready documentation standards for underwriting, engineering, and portal domains.
 
 ## Rules

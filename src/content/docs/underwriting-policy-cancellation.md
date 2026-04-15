@@ -7,8 +7,6 @@ tags:
 last_updated: "2026-04-15"
 ---
 
-## Overview
-
 Policy cancellation is triggered when a billing cycle remains unpaid past the grace period and no approved exception is active.
 
 ## Rules

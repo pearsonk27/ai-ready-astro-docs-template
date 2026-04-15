@@ -27,7 +27,7 @@ function toPosix(value: string): string {
 function extractSections(content: string): ExportedSection[] {
 	const lines = content.split(/\r?\n/);
 	const sections: ExportedSection[] = [];
-	let currentHeading = 'Document';
+	let currentHeading = 'Overview';
 	let buffer: string[] = [];
 
 	const flush = (): void => {

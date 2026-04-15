@@ -11,9 +11,9 @@ All docs in `src/content/docs/**/*.md` must have frontmatter fields:
 - `tags` (string array)
 - `last_updated` (`YYYY-MM-DD`)
 
-All docs must include these sections:
+All docs must include:
 
-- `## Overview`
+- an overview paragraph directly under frontmatter (no `## Summary` or `## Overview` heading)
 - `## Rules`
 - `## Examples`
 

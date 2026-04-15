@@ -114,7 +114,7 @@ tags:${renderTags(tags)}
 last_updated: "${todayIsoDate()}"
 ---
 
-## Overview
+Add an overview paragraph that describes this document.
 
 ## Rules
 

@@ -7,8 +7,6 @@ tags:
 last_updated: "2026-04-15"
 ---
 
-## Overview
-
 The Policy Lifecycle Service evaluates policy state transitions based on billing, underwriting, and compliance events.
 
 ## Rules

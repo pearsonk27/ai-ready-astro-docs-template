@@ -9,7 +9,7 @@ type ValidationIssue = {
 };
 
 const DOCS_GLOB = 'src/content/docs/**/*.md';
-const REQUIRED_SECTIONS = ['overview', 'rules', 'examples'];
+const REQUIRED_SECTIONS = ['rules', 'examples'];
 const DISALLOWED_PHRASES = [/\bsee above\b/i, /\bas mentioned earlier\b/i];
 const EXPLANATION_LABEL = /^(\*\*Explanation:\*\*|Explanation:)\s*(.*)$/;
 
@@ -26,12 +26,45 @@ function collectHeadingNames(markdown: string): Set<string> {
 	return headings;
 }
 
+function extractOverviewText(markdown: string): string {
+	const lines = markdown.split(/\r?\n/);
+	const overviewLines: string[] = [];
+
+	for (const line of lines) {
+		if (/^##\s+/.test(line)) break;
+		overviewLines.push(line);
+	}
+
+	return overviewLines.join('\n').trim();
+}
+
 function validateRequiredSections(content: string, file: string): ValidationIssue[] {
+	const issues: ValidationIssue[] = [];
 	const headings = collectHeadingNames(content);
-	return REQUIRED_SECTIONS.filter((section) => !headings.has(section)).map((missing) => ({
-		file,
-		message: `Missing required section: ## ${missing[0].toUpperCase()}${missing.slice(1)}`,
-	}));
+	const overviewText = extractOverviewText(content);
+
+	if (!overviewText) {
+		issues.push({
+			file,
+			message: 'Missing required overview content before the first ## heading',
+		});
+	}
+
+	if (headings.has('summary')) {
+		issues.push({
+			file,
+			message: 'Do not use ## Summary. Place overview text directly under frontmatter.',
+		});
+	}
+
+	issues.push(
+		...REQUIRED_SECTIONS.filter((section) => !headings.has(section)).map((missing) => ({
+			file,
+			message: `Missing required section: ## ${missing[0].toUpperCase()}${missing.slice(1)}`,
+		}))
+	);
+
+	return issues;
 }
 
 function validateDisallowedPhrases(content: string, file: string): ValidationIssue[] {
