@@ -19,7 +19,7 @@ If payment is received while status is PENDING_CANCEL, status returns to ACTIVE 
 
 After 30 days in PENDING_CANCEL without payment, status changes to CANCELLED.
 
-![Cancellation flow diagram](/images/policy-cancellation-flow.svg)
+![Cancellation flow diagram](./images/policy-cancellation-flow.svg)
 
 **Explanation:**
 Policies move from ACTIVE to PENDING_CANCEL after 10 days of non-payment, and then move to CANCELLED after 30 days if no payment is received.
